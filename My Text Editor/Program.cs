@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace My_Text_Editor
+namespace TextEditor
 {
     static class Program
     {
@@ -15,8 +15,8 @@ namespace My_Text_Editor
         static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.SetCompatibleTextRenderingDefault( false );
+            Application.Run( new Form1() );
         }
     }
 }

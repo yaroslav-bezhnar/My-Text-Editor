@@ -1,4 +1,4 @@
-﻿namespace My_Text_Editor
+﻿namespace TextEditor
 {
     partial class ReplaceForm
     {

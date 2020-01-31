@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace My_Text_Editor
+namespace TextEditor
 {
     public partial class ReplaceForm : Form
     {

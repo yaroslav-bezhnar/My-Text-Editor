@@ -7,7 +7,7 @@
     <ProjectGuid>{01A8A6DA-7B2D-4F25-8502-304CA740EEB9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>My_Text_Editor</RootNamespace>
+    <RootNamespace>TextEditor</RootNamespace>
     <AssemblyName>My Text Editor</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
