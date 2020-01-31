@@ -1,59 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TextEditor
 {
     public partial class SearchForm : Form
     {
-        RichTextBox rtbSearch;
-        int srchPos = 0;
-        bool isSearched = true;
+        #region Fields
 
-        public SearchForm(RichTextBox richbox)
+        private readonly RichTextBox _rtbSearch;
+        private int _searchPos;
+
+        #endregion
+
+        #region Constructors
+
+        public SearchForm( RichTextBox richTextBox )
         {
-            rtbSearch = richbox;
             InitializeComponent();
+
+            _rtbSearch = richTextBox;
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        #endregion
+
+        #region Public Methods
+
+        public void Search( string searchText, RichTextBoxFinds rtbFinds )
         {
-            RichTextBoxFinds rtbF = RichTextBoxFinds.None;
-            if (checkBoxWord.Checked)
+            if ( _searchPos != _rtbSearch.Text.Length )
+            {
+                _searchPos = _rtbSearch.Find( searchText, _searchPos, _rtbSearch.Text.Length, rtbFinds );
+            }
+            else
+            {
+                _searchPos = -1;
+            }
+
+            if ( _searchPos != -1 )
+            {
+                _rtbSearch.Select( _searchPos, searchText.Length );
+                _searchPos += searchText.Length;
+            }
+            else
+            {
+                MessageBox.Show( @"Співпадінь немає: " );
+                _searchPos = 0;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void button1_Click( object sender, EventArgs e )
+        {
+            var rtbF = RichTextBoxFinds.None;
+
+            if ( checkBoxWord.Checked )
                 rtbF |= RichTextBoxFinds.WholeWord;
-            if (checkBoxRegistry.Checked)
+
+            if ( checkBoxRegistry.Checked )
                 rtbF |= RichTextBoxFinds.MatchCase;
-            Search(textBox1.Text, rtbF);
+            Search( textBox1.Text, rtbF );
         }
 
-        public void Search(string srchText, RichTextBoxFinds rtbFinds)
+        private void button4_Click( object sender, EventArgs e )
         {
-            if (srchPos != rtbSearch.Text.Length)
-                srchPos = rtbSearch.Find(srchText, srchPos, rtbSearch.Text.Length, rtbFinds);
-            else
-                srchPos = -1;
-
-            if (srchPos != -1)
-            {
-                rtbSearch.Select(srchPos, srchText.Length);
-                srchPos += srchText.Length;
-            }
-            else
-            {
-                MessageBox.Show(string.Format("Співпадінь немає: ", srchText));
-                srchPos = 0;
-                isSearched = false;
-            }
+            Close();
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        #endregion
     }
 }

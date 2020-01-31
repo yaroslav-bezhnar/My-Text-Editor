@@ -1,139 +1,159 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TextEditor
 {
     public partial class ReplaceForm : Form
     {
-        RichTextBox rtbSearch;
+        #region Fields
 
-        int srchPos = 0;
-        bool isSearched = true;
+        private readonly RichTextBox _rtbSearch;
 
-        public ReplaceForm(RichTextBox richbox)
+        private int _searchPos;
+
+        #endregion
+
+        #region Constructors
+
+        public ReplaceForm( RichTextBox richTextBox )
         {
-            rtbSearch = richbox;
             InitializeComponent();
+
+            _rtbSearch = richTextBox;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Public Methods
+
+        public void Replace( string searchText, string replaceText, RichTextBoxFinds rtbFinds )
         {
-            RichTextBoxFinds rtbFinds = RichTextBoxFinds.None;
-            if (checkBoxWord.Checked)
+            if ( _searchPos != _rtbSearch.Text.Length && _searchPos <= _rtbSearch.Text.Length )
+            {
+                _searchPos = _rtbSearch.Find( searchText, _searchPos, _rtbSearch.Text.Length, rtbFinds );
+            }
+            else
+            {
+                _searchPos = -1;
+            }
+
+            if ( _searchPos != -1 )
+            {
+                _rtbSearch.Select( _searchPos, searchText.Length );
+
+                var subStrOne = _rtbSearch.Text.Substring( 0, _searchPos );
+                var subStrTwo = _rtbSearch.Text.Substring( _searchPos + searchText.Length );
+
+                _rtbSearch.Text = subStrOne + replaceText + subStrTwo;
+                _searchPos += searchText.Length;
+            }
+            else
+            {
+                MessageBox.Show( @"Співпадінь немає: " );
+                _searchPos = 0;
+            }
+        }
+
+        public void Search( string text, RichTextBoxFinds rtbFinds )
+        {
+            if ( _searchPos != _rtbSearch.Text.Length )
+            {
+                _searchPos = _rtbSearch.Find( text, _searchPos, _rtbSearch.Text.Length, rtbFinds );
+            }
+            else
+            {
+                _searchPos = -1;
+            }
+
+            if ( _searchPos != -1 )
+            {
+                _rtbSearch.Select( _searchPos, text.Length );
+                _searchPos += text.Length;
+            }
+            else
+            {
+                MessageBox.Show( @"Співпадінь немає: " );
+                _searchPos = 0;
+            }
+        }
+
+        public void ReplaceAll( string searchText, string replaceText, RichTextBoxFinds rtbFinds )
+        {
+            while ( _searchPos != -1 )
+            {
+                if ( _searchPos != _rtbSearch.Text.Length && _searchPos <= _rtbSearch.Text.Length )
+                {
+                    _searchPos = _rtbSearch.Find( searchText, _searchPos, _rtbSearch.Text.Length, rtbFinds );
+                }
+                else
+                {
+                    _searchPos = -1;
+                }
+
+                if ( _searchPos != -1 )
+                {
+                    _rtbSearch.Select( _searchPos, searchText.Length );
+                    _rtbSearch.SelectedText.Replace( _rtbSearch.SelectedText, replaceText );
+
+                    var subStrOne = _rtbSearch.Text.Substring( 0, _searchPos );
+                    var subStrTwo = _rtbSearch.Text.Substring( _searchPos + searchText.Length );
+
+                    _rtbSearch.Text = subStrOne + replaceText + subStrTwo;
+                    _searchPos += searchText.Length;
+                }
+            }
+
+            _searchPos = 0;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void button1_Click( object sender, EventArgs e )
+        {
+            var rtbFinds = RichTextBoxFinds.None;
+
+            if ( checkBoxWord.Checked )
                 rtbFinds |= RichTextBoxFinds.WholeWord;
-            if (checkBoxRegistry.Checked)
+
+            if ( checkBoxRegistry.Checked )
                 rtbFinds |= RichTextBoxFinds.MatchCase;
 
-            Search(textBox1.Text, rtbFinds);
+            Search( textBox1.Text, rtbFinds );
         }
 
-        public void Replace(string searchText, string replaceText, RichTextBoxFinds rtbFinds)
+        private void button2_Click( object sender, EventArgs e )
         {
-            if (srchPos != rtbSearch.Text.Length && srchPos <= rtbSearch.Text.Length)
-            {
-                srchPos = rtbSearch.Find(searchText, srchPos, rtbSearch.Text.Length, rtbFinds);
-            }
-            else
-                srchPos = -1;
+            var rtbFind = RichTextBoxFinds.None;
 
-            if (srchPos != -1)
-            {
-                rtbSearch.Select(srchPos, searchText.Length);
-                //srchPos += searchText.Length;
-                string SubSone = rtbSearch.Text.Substring(0, srchPos);
-                string SubStwo = rtbSearch.Text.Substring(srchPos + searchText.Length);
-                rtbSearch.Text = SubSone + replaceText + SubStwo;
-                srchPos += searchText.Length;
-            }
-            else
-            {
-                MessageBox.Show(string.Format("Співпадінь немає: ", searchText));
-                srchPos = 0;
-                isSearched = false;
-            }
-        }
-
-        public void Search(string zoekText, RichTextBoxFinds rtbF)
-        {
-            if (srchPos != rtbSearch.Text.Length)
-                srchPos = rtbSearch.Find(zoekText, srchPos, rtbSearch.Text.Length, rtbF);
-            else
-                srchPos = -1;
-
-            if (srchPos != -1)
-            {
-                rtbSearch.Select(srchPos, zoekText.Length);
-                srchPos += zoekText.Length;
-            }
-            else
-            {
-                MessageBox.Show(string.Format("Співпадінь немає: ", zoekText));
-                srchPos = 0;
-                isSearched = false;
-            }
-        }
-
-        public void ReplaceAll(string searchText, string replaceText, RichTextBoxFinds rtbFinds)
-        {
-            while (srchPos != -1)
-            {
-                if (srchPos != rtbSearch.Text.Length && srchPos <= rtbSearch.Text.Length)
-                {
-                    srchPos = rtbSearch.Find(searchText, srchPos, rtbSearch.Text.Length, rtbFinds);
-                }
-                else
-                {
-                    srchPos = -1;
-                }
-                if (srchPos != -1)
-                {
-                    rtbSearch.Select(srchPos, searchText.Length);
-                    rtbSearch.SelectedText.Replace(rtbSearch.SelectedText, replaceText);
-                    string SubSone = rtbSearch.Text.Substring(0, srchPos);
-                    string SubStwo = rtbSearch.Text.Substring(srchPos + searchText.Length);
-                    rtbSearch.Text = SubSone + replaceText + SubStwo;
-                    srchPos += searchText.Length;
-                }
-                else
-                {
-                    isSearched = false;
-                }
-            }
-            srchPos = 0;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            RichTextBoxFinds rtbFind = RichTextBoxFinds.None;
-            if (checkBoxWord.Checked)
+            if ( checkBoxWord.Checked )
                 rtbFind |= RichTextBoxFinds.WholeWord;
-            if (checkBoxRegistry.Checked)
+
+            if ( checkBoxRegistry.Checked )
                 rtbFind |= RichTextBoxFinds.MatchCase;
 
-            Replace(textBox1.Text, textBox2.Text, rtbFind);
+            Replace( textBox1.Text, textBox2.Text, rtbFind );
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click( object sender, EventArgs e )
         {
-            RichTextBoxFinds rtbF = RichTextBoxFinds.None;
-            if (checkBoxWord.Checked)
+            var rtbF = RichTextBoxFinds.None;
+
+            if ( checkBoxWord.Checked )
                 rtbF |= RichTextBoxFinds.WholeWord;
-            if (checkBoxRegistry.Checked)
+
+            if ( checkBoxRegistry.Checked )
                 rtbF |= RichTextBoxFinds.MatchCase;
 
-            ReplaceAll(textBox1.Text, textBox2.Text, rtbF);
+            ReplaceAll( textBox1.Text, textBox2.Text, rtbF );
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click( object sender, EventArgs e )
         {
-            this.Close();
+            Close();
         }
+
+        #endregion
     }
 }
